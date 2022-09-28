@@ -1,4 +1,8 @@
-import { createUserWithEmailAndPassword, onAuthStateChanged } from 'firebase/auth';
+import {
+  createUserWithEmailAndPassword,
+  onAuthStateChanged,
+  signInWithEmailAndPassword,
+} from 'firebase/auth';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
@@ -11,7 +15,13 @@ export default function Login() {
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
 
-  const handleLogin = async () => {};
+  const handleLogin = async () => {
+    try {
+      await signInWithEmailAndPassword(firebaseAuth, email, password);
+    } catch (error) {
+      console.log(error.code);
+    }
+  };
 
   onAuthStateChanged(firebaseAuth, (currentUser) => {
     if (currentUser) navigate('/');
@@ -22,7 +32,7 @@ export default function Login() {
       <BackgroundImage />
       <div className="content">
         <Header />
-        <div className="form-container flex-column a-center j-center">
+        <div className="form-container flex column a-center j-center">
           <div className="form flex column a-center j-center">
             <div className="title">
               <h3>Login</h3>
@@ -45,7 +55,6 @@ export default function Login() {
               />
               <button onClick={handleLogin}>Sign In</button>
               {/* <input type="checkbox" /> <span>Remember me</span> */}
-              45:54
             </div>
           </div>
         </div>
@@ -65,55 +74,32 @@ const Container = styled.div`
     width: 100vw;
     display: grid;
     grid-template-rows: 15vh 85vh;
-    .body {
-      gap: 1rem;
-
-      .text {
-        text-align: center;
-        /* gap: 1rem; */
-        /* font-size: 2rem; */
-
-        h1 {
-          font-size: 3rem;
-          padding: 0 22rem;
-          font-weight: 700;
-        }
-      }
-
+    .form-container {
+      gap: 2rem;
+      height: 85vh;
       .form {
-        display: grid;
-        grid-template-columns: ${({ showPassword }) => (showPassword ? '1fr 1fr' : '2fr 1fr')};
-        width: 60%;
-        input {
-          color: black;
-          border: none;
-          padding: 1.5rem;
-          font-size: 1.2rem;
-          border: 1px solid black;
-          &:focus {
-            outline: none;
+        padding: 2rem;
+        background-color: #000000b0;
+        width: 30vw;
+        gap: 2rem;
+        color: white;
+        .container {
+          gap: 2rem;
+          input {
+            padding: 0.5rem 1rem;
+            width: 15rem;
+          }
+          button {
+            padding: 1rem 1rem;
+            background-color: #e50914;
+            border: none;
+            cursor: pointer;
+            border-radius: 0.2rem;
+            font-weight: bolder;
+            font-size: 1.05rem;
+            color: #ffffff;
           }
         }
-        button {
-          padding: 0.5rem 1rem;
-          background-color: #e50914;
-          border: none;
-          cursor: pointer;
-          border-radius: 0.2rem;
-          font-weight: bolder;
-          font-size: 1.05rem;
-          color: #ffffff;
-        }
-      }
-      button {
-        padding: 0.5rem 1rem;
-        background-color: #e50914;
-        border: none;
-        cursor: pointer;
-        border-radius: 0.2rem;
-        font-weight: bolder;
-        font-size: 1.05rem;
-        color: #ffffff;
       }
     }
   }
