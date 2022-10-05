@@ -6,9 +6,12 @@ import { AiOutlineInfoCircle } from 'react-icons/ai';
 import Navbar from '../components/Navbar';
 import backgroundImage from '../assets/home.jpg';
 import MovieLogo from '../assets/homeTitle.webp';
+import { useNavigate } from 'react-router-dom';
 
 export default function Home() {
   const [isScrolled, setIsScrolled] = useState(false);
+
+  const navigate = useNavigate();
 
   window.onscroll = () => {
     setIsScrolled(window.pageYOffset === 0 ? false : true);
@@ -25,7 +28,7 @@ export default function Home() {
             <img src={MovieLogo} alt="Movie Logo" />
           </div>
           <div className="buttons flex">
-            <button className="flex j-center a-center">
+            <button className="flex j-center a-center" onClick={() => navigate('/player')}>
               <FaPlay /> Play
             </button>
             <button className="flex j-center a-center">
@@ -77,6 +80,7 @@ const Container = styled.div`
           }
           &:nth-of-type(2) {
             background-color: #6d6d6e;
+            color: #ffffff;
           }
         }
       }
