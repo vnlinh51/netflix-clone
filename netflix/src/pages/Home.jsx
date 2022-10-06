@@ -1,17 +1,36 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { FaPlay } from 'react-icons/fa';
 import { AiOutlineInfoCircle } from 'react-icons/ai';
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 
 import Navbar from '../components/Navbar';
 import backgroundImage from '../assets/home.jpg';
 import MovieLogo from '../assets/homeTitle.webp';
-import { useNavigate } from 'react-router-dom';
+import { fetchMovies, getGenres } from '../store';
+import Slider from '../components/Slider';
 
 export default function Home() {
   const [isScrolled, setIsScrolled] = useState(false);
 
   const navigate = useNavigate();
+
+  const dispatch = useDispatch();
+
+  const genresLoaded = useSelector((state) => state.netflix.genresLoaded);
+
+  const movies = useSelector((state) => state.netflix.movies);
+
+  // console.log(movies);
+
+  useEffect(() => {
+    dispatch(getGenres());
+  }, []);
+
+  useEffect(() => {
+    if (genresLoaded) dispatch(fetchMovies({ type: 'all' }));
+  });
 
   window.onscroll = () => {
     setIsScrolled(window.pageYOffset === 0 ? false : true);
@@ -37,6 +56,7 @@ export default function Home() {
           </div>
         </div>
       </div>
+      <Slider movies={movies} />
     </Container>
   );
 }
