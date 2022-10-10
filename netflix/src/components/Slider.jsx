@@ -1,4 +1,5 @@
 import React from 'react';
+
 import CardSlider from './CardSlider';
 
 export default function Slider({ movies }) {

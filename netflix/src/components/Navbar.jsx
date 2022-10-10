@@ -35,8 +35,7 @@ export default function Navbar({ isScrolled }) {
             {links.map(({ name, link }) => {
               return (
                 <li key={name}>
-                  <Link to={link} />
-                  {name}
+                  <Link to={link}>{name}</Link>
                 </li>
               );
             })}
@@ -81,6 +80,7 @@ const Container = styled.div`
   .scrolled {
     background-color: #141414;
   }
+
   .nscr {
     background-image: linear-gradient(black, transparent);
   }
@@ -111,6 +111,8 @@ const Container = styled.div`
         gap: 2rem;
         list-style-type: none;
         li {
+          cursor: pointer;
+
           a {
             color: #ffffff;
             text-decoration: none;

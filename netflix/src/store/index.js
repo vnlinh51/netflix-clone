@@ -1,5 +1,6 @@
 import { configureStore, createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import axios from 'axios';
+
 import { API_KEY, TMDB_BASE_URL } from '../utils/constants';
 
 const initialState = {
@@ -12,12 +13,10 @@ export const getGenres = createAsyncThunk('netflix/genres', async () => {
   const {
     data: { genres },
   } = await axios.get(`${TMDB_BASE_URL}/genre/movie/list?api_key=${API_KEY}`);
-  //   console.log(data);
   return genres;
 });
 
 const createArrayFromRawData = (array, moviesArray, genres) => {
-  // console.log(array);
   array.forEach((movie) => {
     const movieGenres = [];
     movie.genre_ids.forEach((genre) => {
@@ -42,22 +41,29 @@ const getRawData = async (api, genres, paging) => {
       data: { results },
     } = await axios.get(`${api}${paging ? `&page${i}` : ''}`);
     createArrayFromRawData(results, moviesArray, genres);
-    return moviesArray;
   }
+  return moviesArray;
 };
 
-export const fetchMovies = createAsyncThunk(
-  'netflix/trending',
-  async ({ type }, thunkApi) => {
+export const fetchMovies = createAsyncThunk('netflix/trending', async ({ type }, thunkApi) => {
+  const {
+    netflix: { genres },
+  } = thunkApi.getState();
+  return getRawData(`${TMDB_BASE_URL}/trending/${type}/week?api_key=${API_KEY}`, genres, true);
+});
+
+export const fetchDataByGenre = createAsyncThunk(
+  'netflix/genre',
+  async ({ genre, type }, thunkAPI) => {
     const {
       netflix: { genres },
-    } = thunkApi.getState();
-    return getRawData(`${TMDB_BASE_URL}/trending/${type}/week?api_key=${API_KEY}`, genres, true);
+    } = thunkAPI.getState();
+    return getRawData(
+      `https://api.themoviedb.org/3/discover/${type}?api_key=${API_KEY}&with_genres=${genre}`,
+      genres
+    );
   }
-  // console.log(data);
 );
-
-// return getRawData(`${TMDB_BASE_URL}/discover/${type}?api_key=${API_KEY}&with_genres=${genre}`);
 
 const NetflixSlice = createSlice({
   name: 'Netflix',

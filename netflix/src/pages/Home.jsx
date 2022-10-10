@@ -13,16 +13,10 @@ import Slider from '../components/Slider';
 
 export default function Home() {
   const [isScrolled, setIsScrolled] = useState(false);
-
   const navigate = useNavigate();
-
   const dispatch = useDispatch();
-
-  const genresLoaded = useSelector((state) => state.netflix.genresLoaded);
-
   const movies = useSelector((state) => state.netflix.movies);
-
-  // console.log(movies);
+  const genresLoaded = useSelector((state) => state.netflix.genresLoaded);
 
   useEffect(() => {
     dispatch(getGenres());
