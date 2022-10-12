@@ -7,6 +7,8 @@ import Register from './pages/Register';
 import Player from './pages/Player';
 import NotFund from './pages/NotFund';
 import Movies from './pages/Movies';
+import TVShows from './pages/TVShows';
+import UserList from './pages/UserList';
 
 const App = () => {
   return (
@@ -17,6 +19,8 @@ const App = () => {
         <Route path="/login" exact element={<Login />} />
         <Route path="/signup" exact element={<Register />} />
         <Route path="/movies" exact element={<Movies />} />
+        <Route path="/tv" exact element={<TVShows />} />
+        <Route path="/my-list" exact element={<UserList />} />
 
         <Route path="player" exact element={<Player />} />
 

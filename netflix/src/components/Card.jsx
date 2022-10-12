@@ -1,22 +1,49 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
+import { useNavigate } from 'react-router-dom';
 import { IoPlayCircleSharp } from 'react-icons/io5';
 import { RiThumbUpFill, RiThumbDownFill } from 'react-icons/ri';
 import { BsCheck } from 'react-icons/bs';
 import { AiOutlinePlus } from 'react-icons/ai';
 import { BiChevronDown } from 'react-icons/bi';
+import { onAuthStateChanged } from 'firebase/auth';
+import axios from 'axios';
 
 import video from '../assets/video.mp4';
+import { firebaseAuth } from '../utils/firebase';
+import { useDispatch } from 'react-redux';
+import { removeMovieFromLiked } from '../store';
 
 export default React.memo(function Card({ movieData, index, isLiked = false }) {
   const [isHovered, setIsHovered] = useState(false);
-
+  const [email, setEmail] = useState(undefined);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  onAuthStateChanged(firebaseAuth, (currentUser) => {
+    if (currentUser) {
+      setEmail(currentUser.email);
+    } else {
+      navigate('/login');
+    }
+  });
+
+  const addToList = async () => {
+    // console.log('add list');
+    try {
+      await axios.post('http://localhost:5000/api/user/add', { email, data: movieData });
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <Container onMouseEnter={() => setIsHovered(true)} onMouseLeave={() => setIsHovered(false)}>
-      <img src={`https://image.tmdb.org/t/p/w500${movieData.image}`} alt="movie" />
+      <img
+        src={`https://image.tmdb.org/t/p/w500${movieData.image}`}
+        alt="card"
+        onClick={() => navigate('/player')}
+      />
 
       {isHovered && (
         <div className="hover">
@@ -41,14 +68,17 @@ export default React.memo(function Card({ movieData, index, isLiked = false }) {
             </h3>
             <div className="icons flex j-between">
               <div className="controls flex">
-                <IoPlayCircleSharp title="play" onClick={() => navigate('/player')} />
+                <IoPlayCircleSharp title="Play" onClick={() => navigate('/player')} />
+                {isLiked ? (
+                  <BsCheck
+                    title="Remove From List"
+                    onClick={() => dispatch(removeMovieFromLiked({ movieId: movieData.id, email }))}
+                  />
+                ) : (
+                  <AiOutlinePlus title="Add to my list" onClick={addToList} />
+                )}
                 <RiThumbUpFill title="Like" />
                 <RiThumbDownFill title="Dislike" />
-                {isLiked ? (
-                  <BsCheck title="Remove From List" />
-                ) : (
-                  <AiOutlinePlus title="Add to my list" />
-                )}
               </div>
               <div className="info">
                 <BiChevronDown title="More Info" />
@@ -57,9 +87,9 @@ export default React.memo(function Card({ movieData, index, isLiked = false }) {
 
             <div className="genres flex">
               <ul className="flex">
-                {movieData.genres.map((genre, index) => {
-                  <li key={index}>{genre}</li>;
-                })}
+                {movieData.genres.map((genre) => (
+                  <li key={genre}>{genre}</li>
+                ))}
               </ul>
             </div>
           </div>
@@ -91,7 +121,7 @@ const Container = styled.div`
     border-radius: 0.3rem;
     box-shadow: rgba(0, 0, 0, 0.75) 0px 3px 10px;
     background-color: #181818;
-    transition: 0.3s ease-in-out;
+    transition: 1s ease-in-out;
     .image-video-container {
       position: relative;
       height: 140px;
@@ -124,9 +154,11 @@ const Container = styled.div`
         gap: 1rem;
       }
       svg {
-        font-size: 2rem;
+        font-size: 1.5rem;
         cursor: pointer;
         transition: 0.3s ease-in-out;
+        border-radius: 50%;
+        border: 1px solid white;
         &:hover {
           color: #b8b8b8;
         }

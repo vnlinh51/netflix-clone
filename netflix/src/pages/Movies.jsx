@@ -10,9 +10,11 @@ import { firebaseAuth } from '../utils/firebase';
 import Navbar from '../components/Navbar';
 import Slider from '../components/Slider';
 import SelectGenre from '../components/SelectGenre';
+import NotAvailable from '../components/NotAvailable';
 
 export default function Movies() {
   const [isScrolled, setIsScrolled] = useState(false);
+  const [user, setUser] = useState(undefined);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const movies = useSelector((state) => state.netflix.movies);
@@ -24,8 +26,8 @@ export default function Movies() {
   }, []);
 
   useEffect(() => {
-    if (genresLoaded) dispatch(fetchMovies({ type: 'movies' }));
-  });
+    if (genresLoaded) dispatch(fetchMovies({ genres, type: 'movies' }));
+  }, [genresLoaded]);
 
   window.onscroll = () => {
     setIsScrolled(window.pageYOffset === 0 ? false : true);
@@ -33,7 +35,7 @@ export default function Movies() {
   };
 
   onAuthStateChanged(firebaseAuth, (currentUser) => {
-    if (currentUser) SpeechSynthesisUtterance(currentUser.uid);
+    if (currentUser) setUser(currentUser.uid);
     else navigate('/login');
   });
 
@@ -44,8 +46,15 @@ export default function Movies() {
       </div>
 
       <div className="data">
-        <SelectGenre genres={genres} />
-        {movies.length ? <Slider movies={movies} /> : <NotFund />}
+        {/* <span>Movies</span> */}
+        <SelectGenre genres={genres} type="movie" />
+        {movies.length ? (
+          <Slider movies={movies} />
+        ) : (
+          <h1 className="not-available">
+            No Movies available for the selected genre. Please select a different genre.
+          </h1>
+        )}
       </div>
     </Container>
   );
