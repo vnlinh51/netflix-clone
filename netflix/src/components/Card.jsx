@@ -7,11 +7,11 @@ import { BsCheck } from 'react-icons/bs';
 import { AiOutlinePlus } from 'react-icons/ai';
 import { BiChevronDown } from 'react-icons/bi';
 import { onAuthStateChanged } from 'firebase/auth';
+import { useDispatch } from 'react-redux';
 import axios from 'axios';
 
 import video from '../assets/video.mp4';
 import { firebaseAuth } from '../utils/firebase';
-import { useDispatch } from 'react-redux';
 import { removeMovieFromLiked } from '../store';
 
 export default React.memo(function Card({ movieData, index, isLiked = false }) {
@@ -20,6 +20,7 @@ export default React.memo(function Card({ movieData, index, isLiked = false }) {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
+  //=========== check login ===========
   onAuthStateChanged(firebaseAuth, (currentUser) => {
     if (currentUser) {
       setEmail(currentUser.email);
@@ -28,8 +29,8 @@ export default React.memo(function Card({ movieData, index, isLiked = false }) {
     }
   });
 
+  //=========== add movie to user list ===========
   const addToList = async () => {
-    // console.log('add list');
     try {
       await axios.post('http://localhost:5000/api/user/add', { email, data: movieData });
     } catch (error) {

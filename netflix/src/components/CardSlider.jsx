@@ -9,6 +9,7 @@ export default React.memo(function CardSlider({ data, title }) {
   const [sliderPosition, setSliderPosition] = useState(0);
   const listRef = useRef();
 
+  // =========== swap ===========
   const handleDirection = (direction) => {
     let distance = listRef.current.getBoundingClientRect().x - 70;
     if (direction === 'left' && sliderPosition > 0) {

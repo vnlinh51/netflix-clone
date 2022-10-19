@@ -8,6 +8,10 @@ import { firebaseAuth } from '../utils/firebase';
 import logo from '../assets/logo.png';
 
 export default function Navbar({ isScrolled }) {
+  const [showSearch, setShowSearch] = useState(false);
+  const [inputHover, setInputHover] = useState(false);
+  const navigate = useNavigate();
+
   const links = [
     { name: 'Home', link: '/' },
     { name: 'TV Shows', link: '/tv' },
@@ -15,14 +19,10 @@ export default function Navbar({ isScrolled }) {
     { name: 'My List', link: '/my-list' },
   ];
 
-  const navigate = useNavigate();
-
+  //=========== check login ===========
   onAuthStateChanged(firebaseAuth, (currentUser) => {
     if (!currentUser) navigate('/login');
   });
-
-  const [showSearch, setShowSearch] = useState(false);
-  const [inputHover, setInputHover] = useState(false);
 
   return (
     <Container>
